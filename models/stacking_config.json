@@ -1,0 +1,52 @@
+{
+  "best_method": "Stacking (Meta-LR)",
+  "best_oof_f1": 0.9552145967240308,
+  "stacking_cv_f1": "0.9548 \u00b1 0.0107",
+  "rank_avg_oof_f1": 0.65488759452584,
+  "specialist_oof_f1": 0.941642250749577,
+  "confidence_blend_alpha": 0.0,
+  "confidence_blend_oof_f1": 0.9544592030360531,
+  "stack_thresholds": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "stack_thresh_oof_f1": 0.9552145967240308,
+  "best_model_per_class": {
+    "Human": "DeBERTa",
+    "DeepSeek": "DeBERTa",
+    "Grok": "DeBERTa",
+    "Claude": "DeBERTa",
+    "Gemini": "SVC",
+    "ChatGPT": "SVC"
+  },
+  "all_methods_ranked": [
+    [
+      "Stacking (Meta-LR)",
+      0.9552145967240308
+    ],
+    [
+      "Stacking + Thresholds",
+      0.9552145967240308
+    ],
+    [
+      "Phase 4: Soft Voting",
+      0.9544592030360531
+    ],
+    [
+      "Confidence Blending",
+      0.9544592030360531
+    ],
+    [
+      "Specialist Voting",
+      0.941642250749577
+    ],
+    [
+      "Rank Averaging",
+      0.65488759452584
+    ]
+  ]
+}
