@@ -1,0 +1,30 @@
+# Core
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.4
+scipy>=1.12
+
+# Deep Learning
+torch>=2.0
+transformers>=4.40
+accelerate>=0.27
+
+# Tree-based Models
+xgboost>=2.0
+lightgbm>=4.0
+
+# NLP / Feature Engineering
+nltk>=3.8
+textstat>=0.7
+tqdm>=4.65
+
+# Serialization
+joblib>=1.3
+
+# Visualization
+matplotlib>=3.8
+seaborn>=0.13
+
+# Jupyter
+jupyter>=1.0
+ipykernel>=6.25
