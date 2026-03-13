@@ -1,0 +1,122 @@
+{
+  "competition": {
+    "title": "MALTO Recruitment Hackathon",
+    "subtitle": "Human vs. AI-Generated Text Classification",
+    "url": "https://www.kaggle.com/competitions/malto-recruitment-hackathon",
+    "platform": "Kaggle",
+    "category": "Community",
+    "reward": "Kudos",
+    "license": "CC0: Public Domain"
+  },
+  "timeline": {
+    "start_date": "2026-03-09",
+    "close_date": "2026-03-19",
+    "total_duration_days": 10,
+    "days_remaining_as_of_2026_03_12": 7,
+    "working_days_left": 6
+  },
+  "task": {
+    "type": "Multi-class Classification",
+    "num_classes": 6,
+    "objective": "Classify text as human-written or identify which specific AI model generated it",
+    "input": "Text content",
+    "output": "Label (0-5)",
+    "labels": {
+      "0": "Human-written text",
+      "1": "DeepSeek generated text",
+      "2": "Grok generated text",
+      "3": "Claude generated text",
+      "4": "Gemini generated text",
+      "5": "ChatGPT generated text"
+    }
+  },
+  "evaluation": {
+    "metric": "Macro F1 Score",
+    "note": "Models must perform well across ALL categories, not just the most frequent ones."
+  },
+  "submission": {
+    "format": "CSV",
+    "columns": ["ID", "LABEL"],
+    "max_daily_submissions": 10,
+    "max_final_selections": 2,
+    "example": [
+      {"ID": 0, "LABEL": 5},
+      {"ID": 1, "LABEL": 0},
+      {"ID": 2, "LABEL": 3}
+    ]
+  },
+  "dataset": {
+    "total_size_mb": 6.73,
+    "format": "CSV",
+    "files": {
+      "train.csv": {
+        "description": "Training dataset with text samples and labels",
+        "size_bytes": 5371188,
+        "rows": 2400,
+        "columns": ["TEXT", "LABEL"],
+        "created": "2026-03-09T11:23:14.739Z"
+      },
+      "test.csv": {
+        "description": "Test dataset with text samples, no labels. Has unnamed index column + TEXT.",
+        "size_bytes": 1356415,
+        "rows": 600,
+        "columns": ["(index)", "TEXT"],
+        "created": "2026-03-09T11:23:14.553Z"
+      }
+    },
+    "label_distribution_train": {
+      "0_Human": 1520,
+      "1_DeepSeek": 80,
+      "2_Grok": 160,
+      "3_Claude": 80,
+      "4_Gemini": 240,
+      "5_ChatGPT": 320
+    },
+    "total_samples": 3000,
+    "class_imbalance_note": "Heavily imbalanced — Human (63.3%) dominates; DeepSeek and Claude have only 80 samples each (3.3%)"
+  },
+  "rules": {
+    "forbidden": [
+      "Pre-trained AI-generated code detectors are FORBIDDEN",
+      "Additional data beyond training set is FORBIDDEN",
+      "Multiple Kaggle accounts are FORBIDDEN"
+    ],
+    "allowed": [
+      "Public code sharing on Kaggle forums/notebooks"
+    ],
+    "team_size": 1,
+    "individual_only": true,
+    "data_note": "Human-written texts are taken from websites, NOT written by organizers"
+  },
+  "technical_notes": {
+    "key_challenges": [
+      "Severe class imbalance (Human: 1520 vs DeepSeek/Claude: 80 each)",
+      "Macro F1 requires good performance on ALL classes including minority ones",
+      "Distinguishing between different AI models is harder than human vs AI",
+      "Modern LLMs produce highly fluent, human-like text",
+      "Cannot use pre-trained AI detectors (e.g., GPTZero, OpenAI detector)"
+    ],
+    "suggested_approaches": [
+      "TF-IDF + traditional ML (SVM, XGBoost, LightGBM) as baseline",
+      "Fine-tuned transformer models (BERT, RoBERTa, DeBERTa)",
+      "Stylometric / linguistic feature engineering",
+      "Class balancing: SMOTE, class weights, oversampling minority classes",
+      "Ensemble methods for robustness",
+      "Cross-validation with stratified folds"
+    ]
+  },
+  "accounts": {
+    "kaggle_username": "aliivaezii",
+    "github_username": "aliivaezii"
+  },
+  "project_status": {
+    "phase": "Phase 6 Complete",
+    "submissions_made": 8,
+    "best_score_cv": 0.9194,
+    "best_model": "Ensemble (DeBERTa-v3-base + SVC + LR) with stacking meta-learner",
+    "models_trained": 13,
+    "feature_dim": 100046,
+    "pipeline_phases": 6,
+    "last_updated": "2026-03-13"
+  }
+}

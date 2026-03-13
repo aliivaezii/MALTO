@@ -1,0 +1,74 @@
+# Python# Python
+
+__pycache__/__pycache__/
+
+*.py[cod]*.py[cod]
+
+*.egg-info/*.egg-info/
+
+.venv/.venv/
+
+venv/venv/
+
+
+
+# Data (too large for git)# Data files (too large for git)
+
+train.csvtrain.csv
+
+test.csvtest.csv
+
+*.zip
+
+# Large binary model artifacts
+
+# Binary model artifacts*.npy
+
+*.npy*.npz
+
+*.npz*.pt
+
+*.pt*.joblib
+
+*.joblibmodels/*.npy
+
+models/*.npz
+
+# Keep JSON configsmodels/*.pt
+
+!models/*.jsonmodels/*.joblib
+
+
+
+# Checkpoints# Keep JSON configs in models/
+
+checkpoints/*.pt!models/*.json
+
+
+
+# Jupyter# Checkpoints (large model files)
+
+.ipynb_checkpoints/checkpoints/
+
+
+
+# macOS# macOS
+
+.DS_Store.DS_Store
+
+
+
+# IDE# IDE
+
+.vscode/.vscode/
+
+.idea/.idea/
+
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Keep figures and submissions in the repo
+# figures/
+# submissions/
+malto-recruitment-hackathon.zip
