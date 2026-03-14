@@ -23,3 +23,4 @@ if you spot bugs, have ideas for improvement, or want to extend the pipeline.
 - Use type hints where reasonable
 - Keep notebooks clean: restart kernel and run all before committing
 - Write clear docstrings for functions in `src/`
+
