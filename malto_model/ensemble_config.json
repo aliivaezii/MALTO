@@ -1,0 +1,27 @@
+{
+  "model_name": "answerdotai/ModernBERT-base",
+  "max_len": 512,
+  "num_labels": 6,
+  "label_map": {
+    "0": "Human",
+    "1": "DeepSeek",
+    "2": "Grok",
+    "3": "Claude",
+    "4": "Gemini",
+    "5": "ChatGPT"
+  },
+  "temperature": 0.3,
+  "ensemble_weights": [
+    0.7,
+    0.3
+  ],
+  "thresholds": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "alpha_fold_full": 0.6
+}
