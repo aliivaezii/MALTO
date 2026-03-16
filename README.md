@@ -1,101 +1,123 @@
-# MALTO — Human vs. AI-Generated Text Classification
+# MALTO — 1st Place Solution
 
-A multi-class text classification pipeline built for the [MALTO Recruitment Hackathon](https://www.kaggle.com/competitions/malto-recruitment-hackathon) hosted by [MALTO](https://malto.ai) and [Politecnico di Torino](https://www.polito.it/).
+**1st place** on the [MALTO Recruitment Hackathon](https://www.kaggle.com/competitions/malto-recruitment-hackathon) hosted by [MALTO](https://malto.ai) and [Politecnico di Torino](https://www.polito.it/).
 
-The goal is to classify text as human-written or identify which of five AI models generated it (DeepSeek, Grok, Claude, Gemini, ChatGPT). 
-
-* **Task:** 6-class text classification with severe class imbalance (19:1)
-* **Metric:** Macro F1 Score
-* **Best Public LB:** 0.92170
-* **Best OOF CV:** 0.9591
+| Metric | Score |
+|---|---|
+| **Public LB (Macro F1)** | **0.95341** |
+| OOF CV (5-fold) | 0.9575 ± 0.0044 |
+| Blended OOF F1 | 0.9605 |
 
 ---
 
-## Dataset Statistics
+## Task
 
-The dataset consists of 2,400 training samples and 600 test samples. The primary challenge is the confusion pair between the two minority classes (DeepSeek and Grok), which act as the main bottleneck for the Macro F1 metric.
+Classify text as human-written or identify which AI model generated it across 6 classes:
 
-| Class | Label | Train Samples | Share |
+| Class | Train Samples | Share |
+|---|---|---|
+| Human | 1,520 | 63.3% |
+| ChatGPT | 320 | 13.3% |
+| Gemini | 240 | 10.0% |
+| Grok | 160 | 6.7% |
+| DeepSeek | 80 | 3.3% |
+| Claude | 80 | 3.3% |
+
+The main challenge is severe class imbalance (19:1 ratio) with DeepSeek and Grok as the hardest minority classes.
+
+---
+
+## Solution
+
+The solution ensembles a fine-tuned transformer with a classical n-gram model, optimised via Nelder-Mead on out-of-fold predictions.
+
+### Pipeline
+
+```
+ModernBERT-base (5-fold CV) ─┬─ Temperature Scaling ─┬─ Nelder-Mead ─── Threshold ─── Submission
+                              │                       │   Blend (70/30)   Nudge
+Full-data ModernBERT (7 ep) ──┘                       │
+                                                      │
+TF-IDF + Calibrated SVC (5-fold CV) ──────────────────┘
+```
+
+### Key Techniques
+
+| Component | Details |
+|---|---|
+| **Transformer** | [ModernBERT-base](https://huggingface.co/answerdotai/ModernBERT-base) fine-tuned with LDAM loss, gradual DRW (10x cap), label smoothing (ε=0.1) |
+| **Optimizer** | AdamW with layer-wise learning rate decay (LLRD=0.9), cosine schedule, 10% warmup |
+| **Classical Model** | TF-IDF (50k char 3-5 grams + 50k word 1-2 grams) → Calibrated LinearSVC (C=5.0) |
+| **Ensemble** | Nelder-Mead optimisation over 6 initialisations on OOF predictions |
+| **Full-data Model** | Trained on all 2,400 samples (7 epochs, LR×0.8), blended with fold-average at α=0.6 |
+| **Post-processing** | Temperature scaling (T=0.30) + conservative per-class threshold nudge [0.85, 1.20] |
+| **Training** | Kaggle T4×2 GPUs via DataParallel, ~155 min total |
+
+### Per-Class OOF Performance
+
+| Class | Precision | Recall | F1 |
 |---|---|---|---|
-| Human | 0 | 1,520 | 63.3% |
-| ChatGPT | 5 | 320 | 13.3% |
-| Gemini | 4 | 240 | 10.0% |
-| Grok | 2 | 160 | 6.7% |
-| DeepSeek | 1 | 80 | 3.3% |
-| Claude | 3 | 80 | 3.3% |
-
----
-
-## Pipeline Overview
-
-The solution follows an 8-phase reproducible pipeline. Run notebooks sequentially (**Phase 1 > 2 > 3 > 4 > 5 > 6**). Each phase saves artifacts into the `models/` directory that the next phase consumes. Phases 7 and 8 build on top of artifacts saved from Phases 2 and 6.
-
-| Phase | Notebook | Description | Best OOF F1 |
-|---|---|---|---|
-| 1 | `eda_and_baseline.ipynb` | EDA, class distribution, text statistics, TF-IDF + LR/LinearSVC baselines | 0.9305 |
-| 2 | `feature_engineering.ipynb` | 46 stylometric features, 100k TF-IDF dims, 10 classical models, 5-fold CV | 0.9194 |
-| 3 | `transformer_finetuning.ipynb` | DeBERTa-v3-base with Focal Loss, LLRD, cosine scheduler, temperature scaling | 0.9151 |
-| 4 | `ensemble_optimization.ipynb` | Weighted soft voting, threshold optimization, pseudo-labeling | 0.9552 |
-| 5 | `advanced_ensemble.ipynb` | Stacking meta-learner, rank averaging, per-class specialist voting, confidence-aware blending | 0.9552 |
-| 6 | `final_submission.ipynb` | Score dashboard, submission agreement analysis, top-2 selection, reproducibility snapshot | N/A |
-| 7 | `deberta_kfold_training.ipynb` | DeBERTa 5-fold CV, weighted voting with SVC + LR | 0.9500 |
-| 8 | `ensemble_boosting.ipynb` | XGBoost + LightGBM diversity, 5-model ensemble, threshold tuning | 0.9591 |
-
----
-
-## Approach & Key Techniques
-
-### Models & Features
-* **Feature Engineering:** 46 handcrafted linguistic and stylometric features (readability, character entropy, AI-phrasing, punctuation patterns) combined with 100k TF-IDF sparse features (50k word + 50k character n-grams).
-* **Classical ML:** LinearSVC (C=5.0) and Logistic Regression (C=2.0) trained with balanced class weights and 5-fold stratified CV.
-* **Transformer:** DeBERTa-v3-base fine-tuned with Focal Loss (gamma=2.0) to handle the 19:1 class imbalance, layer-wise learning rate decay (factor=0.9), and post-hoc temperature scaling on a held-out calibration set. Pre-tokenization is used to avoid bottlenecks.
-* **Tree-Based:** XGBoost and LightGBM trained on the same feature set to add ensemble diversity.
-
-### Ensemble Strategy
-The final prediction blends five base models through weighted soft voting. A grid search over out-of-fold predictions identified the optimal weights. We then applied greedy per-class threshold multipliers to boost recall on minority classes (DeepSeek and Grok represent only 10% of training data combined), and used high-confidence test predictions for pseudo-labeling to augment the training set.
-
----
-
-## Results
+| Human | 1.00 | 1.00 | 1.00 |
+| DeepSeek | 0.85 | 0.82 | 0.84 |
+| Grok | 0.92 | 0.92 | 0.92 |
+| Claude | 1.00 | 1.00 | 1.00 |
+| Gemini | 0.99 | 1.00 | 0.99 |
+| ChatGPT | 1.00 | 1.00 | 1.00 |
 
 ### Score Progression
 
 | Submission | Method | Public LB |
 |---|---|---|
-| `01_tfidf_svc_baseline` | TF-IDF + LinearSVC | 0.84123 |
-| `05_final_stacking` | Stacking meta-LR (DeBERTa + SVC + LR) | 0.90974 |
-| `06_deberta_5fold` | DeBERTa 5-fold only | 0.91648 |
-| `07_weighted_vote_best` | Weighted vote (DeBERTa 0.65 + SVC 0.25 + LR 0.10) | **0.92170** |
-
-### Per-Class OOF Performance (Best Ensemble)
-
-| Class | F1 | Support |
-|---|---|---|
-| Human | 0.998 | 1,520 |
-| ChatGPT | 0.997 | 320 |
-| Gemini | 0.998 | 240 |
-| Grok | 0.882 | 160 |
-| DeepSeek | 0.791 | 80 |
-| Claude | 0.988 | 80 |
+| TF-IDF + LinearSVC baseline | Classical only | 0.84123 |
+| DeBERTa 5-fold | Transformer only | 0.91648 |
+| Weighted vote (DeBERTa + SVC + LR) | Multi-model ensemble | 0.92170 |
+| ModernBERT + LDAM + DRW (3-fold) | Single transformer | 0.94120 |
+| **ModernBERT + SVC ensemble (5-fold)** | **Final solution** | **0.95341** |
 
 ---
 
-## Project Structure
+## Repository Structure
 
-```text
+```
 MALTO/
-├── src/
-│   ├── __init__.py          # Public API re-exports
-│   ├── features.py          # extract_features() -- 46 handcrafted features
-│   ├── models.py            # FocalLoss, TemperatureScaler, ensemble utilities
-│   └── utils.py             # Constants, data loading, submission helpers
-├── notebooks/               # Jupyter notebooks for Phases 1-8
-├── figures/                 # Visualization PNGs
-├── models/                  # Saved model configs (JSON tracked, binaries git-ignored)
-├── checkpoints/             # DeBERTa model checkpoints (git-ignored)
-├── submissions/             # Kaggle submission CSVs
-├── competition_info.json    # Competition metadata
-├── PROJECT_PLAN.md          # Full sprint plan
+├── notebooks/
+│   └── solution.ipynb          # Full pipeline (1st place notebook)
+├── malto_model/
+│   └── ensemble_config.json    # Saved ensemble parameters
+├── submission.csv              # Winning submission
+├── src/                        # Utility modules (features, models, utils)
+├── archive/                    # Previous experiment notebooks and artifacts
 ├── requirements.txt
-├── LICENSE                  
+├── LICENSE
 └── README.md
+```
+
+## Quick Start
+
+Upload `notebooks/solution.ipynb` to Kaggle with GPU T4×2 enabled, attach the competition dataset, and run all cells.
+
+```python
+# Or load the saved model locally:
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+model = AutoModelForSequenceClassification.from_pretrained("malto_model")
+tokenizer = AutoTokenizer.from_pretrained("malto_model")
+```
+
+## Requirements
+
+```
+torch>=2.0
+transformers>=4.40
+scikit-learn>=1.3
+scipy
+numpy
+pandas
+tqdm
+```
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).

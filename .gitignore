@@ -15,12 +15,12 @@ test.csv
 *.npz
 *.pt
 *.joblib
+*.pkl
+*.safetensors
 
-# Keep JSON configs in models/
-!models/*.json
-
-# Checkpoints
-checkpoints/*.pt
+# Keep JSON configs
+!malto_model/ensemble_config.json
+!archive/models/*.json
 
 # Jupyter
 .ipynb_checkpoints/
