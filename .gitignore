@@ -5,10 +5,11 @@ __pycache__/
 .venv/
 venv/
 
-# Data (too large for git)
+# Data and submissions
 train.csv
 test.csv
 *.zip
+submission*.csv
 
 # Binary model artifacts
 *.npy
