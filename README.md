@@ -78,6 +78,59 @@ TF-IDF + Calibrated SVC (5-fold CV) ──────────────�
 
 ---
 
+## Prediction Analysis
+
+Beyond training metrics, several features helped validate and understand the model's predictions on the test set.
+
+### Expected Class Distribution (Sanity Check)
+
+Assuming the test set follows the same class ratios as the training set, the expected counts in 600 test samples are:
+
+| Class    | Train share | Expected (600) | Predicted |
+|----------|-------------|---------------|-----------|
+| Human    | 63.3%       | ~380          | 381       |
+| ChatGPT  | 13.3%       | ~80           | 81        |
+| Gemini   | 10.0%       | ~60           | 60        |
+| Grok     | 6.7%        | ~40           | 38        |
+| DeepSeek | 3.3%        | ~20           | 21        |
+| Claude   | 3.3%        | ~20           | 19        |
+
+Distribution alignment with prior expectations is a strong signal that the model is calibrated correctly. Large deviations (e.g. a model predicting 50 Grok and only 8 DeepSeek) indicate systematic classifier bias.
+
+### Classifier Agreement Analysis
+
+Comparing predictions from the transformer ensemble against the calibrated SVC revealed 20 disagreements across 600 samples (96.7% agreement). All disagreements were **DeepSeek ↔ Grok confusions** — no Human ↔ AI errors were found.
+
+| Signal | Transformer | SVC |
+|--------|-------------|-----|
+| DeepSeek predicted | 21 | 8 |
+| Grok predicted | 38 | 50 |
+
+The SVC systematically over-predicts Grok and under-predicts DeepSeek. This is a known failure mode of TF-IDF n-gram models: Grok and DeepSeek share vocabulary overlap in short, fact-dense texts, and TF-IDF has no semantic depth to distinguish them. The transformer (ModernBERT) is far more reliable on these minority classes.
+
+**Key insight:** When the transformer and SVC disagree on a DeepSeek/Grok call, trust the transformer. Overriding it with the SVC signal consistently hurt the score (confirmed by ablation submissions).
+
+### Hard Class Characteristics
+
+| Class    | OOF F1 | Why it's hard |
+|----------|--------|----------------|
+| DeepSeek | 0.84   | Only 80 training samples; style overlaps with Grok on short technical texts |
+| Grok     | 0.92   | 160 samples; slightly verbose, but shares register with ChatGPT on opinion topics |
+| Others   | ≥0.99  | Large sample counts; highly distinctive style (Claude: concise structured; Gemini: markdown-heavy) |
+
+### Features Used to Evaluate Disputed Samples
+
+For the 20 transformer–SVC disagreements, each sample was evaluated along four axes:
+
+1. **Text length (word count)** — very short texts (< 80 words) carry less signal; classification is less reliable
+2. **Topic / domain** — certain topics (travel, biology, history) are associated with specific AI styles that can serve as a weak prior
+3. **SVC calibrated confidence** — `predict_proba` from the CalibratedClassifierCV; scores below 0.70 indicate low SVC certainty
+4. **Cross-model softmax gap** — the margin between the top-1 and top-2 logits from the transformer; a narrow gap flags genuinely ambiguous samples
+
+Samples where all four signals agreed with the transformer were treated as correctly classified. Only when a strong topic prior and high SVC confidence aligned against the transformer was a correction considered — and even then, such corrections proved unreliable in ablation testing.
+
+---
+
 ## Repository Structure
 
 ```
