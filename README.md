@@ -139,8 +139,7 @@ For the 20 transformer–SVC disagreements, each sample was evaluated along four
 ```
 MALTO/
 ├── notebooks/
-│   ├── solution.ipynb              # Full pipeline — 2nd place notebook
-│   └── solution_v9_tpu.ipynb       # TPU variant with per-class Nelder-Mead
+│   └── solution.ipynb              # Full pipeline notebook
 ├── src/
 │   ├── features.py                 # 46-feature stylometric extractor
 │   ├── models.py                   # LDAM loss, temperature scaling, ensemble utils
