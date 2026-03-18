@@ -4,7 +4,7 @@
 
 | Metric | Score |
 |---|---|
-| **Public LB (Macro F1)** | **0.95341** |
+| **Public LB (Macro F1)** | **0.95919** |
 | OOF CV (5-fold) | 0.9575 ± 0.0044 |
 | Blended OOF F1 | 0.9605 |
 
@@ -74,7 +74,8 @@ TF-IDF + Calibrated SVC (5-fold CV) ──────────────�
 | DeBERTa 5-fold | Transformer only | 0.91648 |
 | Weighted vote (DeBERTa + SVC + LR) | Multi-model ensemble | 0.92170 |
 | ModernBERT + LDAM + DRW (3-fold) | Single transformer | 0.94120 |
-| **ModernBERT + SVC ensemble (5-fold)** | **Final solution** | **0.95341** |
+| ModernBERT + SVC ensemble (5-fold) | Base solution | 0.95341 |
+| **ModernBERT + SVC + content analysis** | **Final submission (2nd place)** | **0.95919** |
 
 ---
 
@@ -91,8 +92,8 @@ Assuming the test set follows the same class ratios as the training set, the exp
 | Human    | 63.3%       | ~380          | 381       |
 | ChatGPT  | 13.3%       | ~80           | 81        |
 | Gemini   | 10.0%       | ~60           | 60        |
-| Grok     | 6.7%        | ~40           | 38        |
-| DeepSeek | 3.3%        | ~20           | 21        |
+| Grok     | 6.7%        | ~40           | 39        |
+| DeepSeek | 3.3%        | ~20           | 20        |
 | Claude   | 3.3%        | ~20           | 19        |
 
 Distribution alignment with prior expectations is a strong signal that the model is calibrated correctly. Large deviations (e.g. a model predicting 50 Grok and only 8 DeepSeek) indicate systematic classifier bias.
