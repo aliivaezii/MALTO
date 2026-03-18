@@ -10,9 +10,9 @@
 
 | Metric | Score |
 |---|---|
+| OOF F1 — transformer only (5-fold CV) | 0.9575 ± 0.0044 |
+| OOF F1 — after ensemble & threshold tuning | 0.9605 |
 | **Public LB (Macro F1)** | **0.95919** |
-| OOF CV (5-fold) | 0.9575 ± 0.0044 |
-| Blended OOF F1 | 0.9605 |
 
 ![Competition Results](figures/competition_results.png)
 
