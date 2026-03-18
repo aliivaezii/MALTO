@@ -1,12 +1,14 @@
-# MALTO — 1st Place Solution
+# MALTO — 2nd Place Solution
 
-**1st place** on the [MALTO Recruitment Hackathon](https://www.kaggle.com/competitions/malto-recruitment-hackathon) hosted by [MALTO](https://malto.ai) and [Politecnico di Torino](https://www.polito.it/).
+**2nd place** on the [MALTO Recruitment Hackathon](https://www.kaggle.com/competitions/malto-recruitment-hackathon) hosted by [MALTO](https://malto.ai) and [Politecnico di Torino](https://www.polito.it/).
 
 | Metric | Score |
 |---|---|
 | **Public LB (Macro F1)** | **0.95341** |
 | OOF CV (5-fold) | 0.9575 ± 0.0044 |
 | Blended OOF F1 | 0.9605 |
+
+![Competition Results](figures/competition_results.png)
 
 ---
 
@@ -81,10 +83,12 @@ TF-IDF + Calibrated SVC (5-fold CV) ──────────────�
 ```
 MALTO/
 ├── notebooks/
-│   └── solution.ipynb          # Full pipeline (1st place notebook)
+│   ├── solution.ipynb          # Full pipeline (main notebook)
+│   └── solution_v9_tpu.ipynb   # TPU variant with per-class Nelder-Mead ensemble
 ├── malto_model/
 │   └── ensemble_config.json    # Saved ensemble parameters
-├── submission.csv              # Winning submission
+├── submission.csv              # Base submission (0.95341 public F1)
+├── submission_final.csv        # Final 2nd-place submission
 ├── src/                        # Utility modules (features, models, utils)
 ├── archive/                    # Previous experiment notebooks and artifacts
 ├── requirements.txt
