@@ -145,8 +145,7 @@ MALTO/
 │   ├── models.py                   # LDAM loss, temperature scaling, ensemble utils
 │   └── utils.py                    # Data I/O and submission helpers
 ├── scripts/
-│   ├── generate_figures.py         # Competition result visualizations
-│   └── predict.py                  # CLI inference (SVC model, no GPU required)
+│   └── generate_figures.py         # Competition result visualizations
 ├── malto_model/
 │   ├── ensemble_config.json        # Saved ensemble parameters and label map
 │   ├── char_tfidf.pkl              # TF-IDF character n-gram vectorizer
@@ -177,25 +176,6 @@ MALTO/
 4. Run All Cells (~155 min)
 
 The notebook auto-detects `/kaggle/input/` vs local paths.
-
-### Local inference (SVC model — no GPU required)
-
-```bash
-# Set up environment
-conda env create -f environment.yml
-conda activate malto
-
-# Single text
-python scripts/predict.py --text "The mitochondria is the powerhouse of the cell."
-
-# With top-3 class probabilities
-python scripts/predict.py --text "Your text here" --top3
-
-# Batch from file (one text per line)
-python scripts/predict.py --file texts.txt
-```
-
-> **Note:** Local inference uses the saved SVC model only. Full transformer inference requires the Kaggle-saved fold checkpoints (~1 GB per fold, not included due to size).
 
 ### Load the transformer locally
 
