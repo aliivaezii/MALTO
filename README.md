@@ -156,7 +156,6 @@ MALTO/
 ├── figures/
 │   └── competition_results.png     # Score progression + leaderboard chart
 ├── archive/                        # Previous experiment notebooks and submissions
-├── submission_final.csv            # Final 2nd-place submission (600 predictions)
 ├── environment.yml                 # Conda environment spec
 ├── requirements.txt
 ├── CONTRIBUTING.md
