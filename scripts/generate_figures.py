@@ -21,7 +21,7 @@ SCORE_HISTORY = [
     ("Multi-model\nweighted vote",              0.92170, "#c0c0c0"),
     ("ModernBERT + LDAM\n+ DRW (3-fold)",      0.94120, "#c0c0c0"),
     ("ModernBERT + SVC\nensemble (5-fold)",    0.95341, "#2563EB"),
-    ("Final submission\n(2nd place)",           0.95341, "#16A34A"),
+    ("Final submission\n(2nd place)",           0.95919, "#16A34A"),
 ]
 
 PER_CLASS = {
@@ -35,7 +35,7 @@ PER_CLASS = {
 
 LEADERBOARD = [
     ("1st place", 0.96423, "#F59E0B"),
-    ("2nd place\n(ours)", 0.95341, "#16A34A"),
+    ("2nd place\n(ours)", 0.95919, "#16A34A"),
     ("3rd place", 0.94500, "#c0c0c0"),
     ("4th place", 0.93100, "#c0c0c0"),
     ("5th place", 0.91800, "#c0c0c0"),
