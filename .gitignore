@@ -5,9 +5,7 @@ __pycache__/
 .venv/
 venv/
 
-# Data and submissions
-train.csv
-test.csv
+# Submissions
 *.zip
 submission*.csv
 
